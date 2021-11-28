@@ -3,7 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/edubi/Documents/personales/DogsApp/app/src/main/res/drawable/ic_home.xml" value="0.24444444444444444" />
+        <entry key="..\:/Users/edubi/Documents/personales/DogsApp/app/src/main/res/drawable/shape_search.xml" value="0.2462962962962963" />
         <entry key="..\:/Users/edubi/Documents/personales/DogsApp/app/src/main/res/layout/activity_main.xml" value="0.22282608695652173" />
+        <entry key="..\:/Users/edubi/Documents/personales/DogsApp/app/src/main/res/layout/dialog_dogs.xml" value="0.22" />
+        <entry key="..\:/Users/edubi/Documents/personales/DogsApp/app/src/main/res/layout/dialog_search.xml" value="0.2740036231884058" />
+        <entry key="..\:/Users/edubi/Documents/personales/DogsApp/app/src/main/res/layout/fragment_dogs.xml" value="0.2164855072463768" />
+        <entry key="..\:/Users/edubi/Documents/personales/DogsApp/app/src/main/res/layout/fragment_facts.xml" value="0.2164855072463768" />
+        <entry key="..\:/Users/edubi/Documents/personales/DogsApp/app/src/main/res/layout/fragment_favorite.xml" value="0.2164855072463768" />
+        <entry key="..\:/Users/edubi/Documents/personales/DogsApp/app/src/main/res/layout/item_dog.xml" value="0.22282608695652173" />
+        <entry key="..\:/Users/edubi/Documents/personales/DogsApp/app/src/main/res/layout/not_found_layout.xml" value="0.30932971014492755" />
+        <entry key="..\:/Users/edubi/Documents/personales/DogsApp/app/src/main/res/menu/bnv_menu.xml" value="0.3265625" />
       </map>
     </option>
   </component>
