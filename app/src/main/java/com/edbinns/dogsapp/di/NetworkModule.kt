@@ -2,9 +2,10 @@ package com.edbinns.dogsapp.di
 
 import android.content.Context
 import androidx.room.Room
-import com.edbinns.dogsapp.services.retrofit.ApiService
+import com.edbinns.dogsapp.services.retrofit.DogFactsApiService
+import com.edbinns.dogsapp.services.retrofit.DogImageApiService
 import com.edbinns.dogsapp.services.room.FavoritesDB
-import com.edbinns.dogsapp.utils.Constants.API_BASE_URl
+import com.edbinns.dogsapp.utils.Constants.DOG_API_BASE_URl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,14 +41,17 @@ object NetworkModule {
 
         return Retrofit.Builder()
             .client(client)
-            .baseUrl(API_BASE_URl)
+            .baseUrl(DOG_API_BASE_URl)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
     @Singleton
     @Provides
-    fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
-    
+    fun provideDogImageApiService(retrofit: Retrofit): DogImageApiService = retrofit.create(DogImageApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideDogFactsApiService(retrofit: Retrofit): DogFactsApiService = retrofit.create(DogFactsApiService::class.java)
 
 }

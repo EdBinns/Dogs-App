@@ -27,12 +27,15 @@ class DogsDialog : DialogFragment(), ItemClickListener<Dog> {
     private var _binding: DialogDogsBinding? = null
     private val binding get() = _binding!!
 
-    private var loading= false
-    private lateinit var dog : Dog
+    private var loading = false
+    private var isFavorite = false
+
+    private lateinit var dog: Dog
+
     private val dogsAdapter: DogsAdapter by lazy {
         DogsAdapter(this)
     }
-    private val manager : StaggeredGridLayoutManager by lazy {
+    private val manager: StaggeredGridLayoutManager by lazy {
         StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
     }
     private val dogsViewModel: DogsViewModel by viewModels()
@@ -44,13 +47,15 @@ class DogsDialog : DialogFragment(), ItemClickListener<Dog> {
     ): View? {
         _binding = DialogDogsBinding.inflate(inflater, container, false)
 
-        dog =  arguments?.getSerializable("info") as Dog
+        dog = arguments?.getSerializable("info") as Dog
         setInfo(dog)
+        clickAddFavorite(dog)
 
-        with(binding.rvDogs) {
+        dogsViewModel.validateFavorite(dog)
+        binding.rvDogs.apply{
             layoutManager = manager
             adapter = dogsAdapter
-           setHasFixedSize(false);
+            setHasFixedSize(false);
             isNestedScrollingEnabled = false;
         }
         binding.swipeContainerDogs.setOnRefreshListener {
@@ -59,6 +64,7 @@ class DogsDialog : DialogFragment(), ItemClickListener<Dog> {
         }
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showLoader()
@@ -66,7 +72,7 @@ class DogsDialog : DialogFragment(), ItemClickListener<Dog> {
         observe()
     }
 
-    private   fun scrollPaging() {
+    private fun scrollPaging() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             binding.scroll.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
 
@@ -77,22 +83,43 @@ class DogsDialog : DialogFragment(), ItemClickListener<Dog> {
                     showLoader()
                 }
             }
-            }
+        }
 
     }
 
     private fun observe() {
         dogsViewModel.imagesList.observe(viewLifecycleOwner, Observer { list ->
-            if (list.isNullOrEmpty()){
+            if (list.isNullOrEmpty()) {
                 showNotFoundLayout()
 //                EMPTY_LIST.showMessage(requireView(), R.color.warning_color)
-            }else
+            } else
                 hideNotFoundLayout()
             dogsAdapter.updateData(list)
             hideLoader()
         })
+
+        dogsViewModel.isFavorite.observe(viewLifecycleOwner, Observer { result ->
+            isFavorite = result
+            println("favorite observer $isFavorite")
+            if (isFavorite) {
+                binding.btnAddFavorite.setImageResource(R.drawable.ic_favorite)
+            } else {
+                binding.btnAddFavorite.setImageResource(R.drawable.ic_favorite_border)
+            }
+        })
     }
 
+    private fun clickAddFavorite(item: Dog) {
+        binding.btnAddFavorite.setOnClickListener {
+            if (isFavorite) {
+                binding.btnAddFavorite.setImageResource(R.drawable.ic_favorite_border)
+                dogsViewModel.deleteFavorite(item)
+            } else {
+                binding.btnAddFavorite.setImageResource(R.drawable.ic_favorite)
+                dogsViewModel.addFavorite(item)
+            }
+        }
+    }
 
     private fun setInfo(dog: Dog) {
         val picasso = Picasso.get()
@@ -101,22 +128,25 @@ class DogsDialog : DialogFragment(), ItemClickListener<Dog> {
         binding.tvDogBreed.text = dog.splitBreed()
     }
 
-    private fun showLoader(){
+    private fun showLoader() {
         binding.swipeContainerDogs.isRefreshing = true
         loading = true
         dogsViewModel.getDogsByBreed(dog.breed)
     }
 
-    private  fun hideLoader(){
+    private fun hideLoader() {
         binding.swipeContainerDogs.isRefreshing = false
         loading = false
     }
+
     private fun showNotFoundLayout() {
         binding.layoutNotFound.notFoundLayout.visibility = View.VISIBLE
     }
-    private  fun hideNotFoundLayout(){
+
+    private fun hideNotFoundLayout() {
         binding.layoutNotFound.notFoundLayout.visibility = View.GONE
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

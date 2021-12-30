@@ -37,6 +37,7 @@ class DogsAdapter(private val itemClickListener: ItemClickListener<Dog>) :
     override fun getItemCount() = imagesList.size
 
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateData(data: List<Dog>) {
         var newList = emptyList<Dog>()
 
@@ -65,6 +66,7 @@ class DogsAdapter(private val itemClickListener: ItemClickListener<Dog>) :
                 val picasso = Picasso.get()
                 picasso.load(dog.imageURL)
                     .into(binding.ivDogPhoto)
+
 
                 binding.tvDogBreed.text = dog.splitBreed()
             }

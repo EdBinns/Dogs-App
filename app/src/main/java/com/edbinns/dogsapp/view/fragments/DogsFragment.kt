@@ -182,7 +182,7 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
     }
 
     override fun onCLickListener(data: Dog) {
-        println("Click in $data")
+
         val bundle = bundleOf("info" to data)
         findNavController().navigate(R.id.navDialogDogs, bundle)
 
