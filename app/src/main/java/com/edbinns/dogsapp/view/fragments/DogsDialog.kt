@@ -124,6 +124,7 @@ class DogsDialog : DialogFragment(), ItemClickListener<Dog> {
     private fun setInfo(dog: Dog) {
         val picasso = Picasso.get()
         picasso.load(dog.imageURL)
+            .resize(400,600)
             .into(binding.ivDogPhotoItem)
         binding.tvDogBreed.text = dog.splitBreed()
     }

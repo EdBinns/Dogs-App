@@ -12,6 +12,7 @@
     <string name="cancelar">Cancelar</string>
     <string name="enviar">Enviar</string>
     <string name="buscar">Buscar</string>
-    <string name="raza">Raza</string>
-    <string name="sub_raza">Sub-raza</string>
+    <string name="raza">Filtrar por raza</string>
+    <string name="sub_raza">Filtrar por Sub-raza</string>
+    <string name="search">Buscar</string>
 </resources>

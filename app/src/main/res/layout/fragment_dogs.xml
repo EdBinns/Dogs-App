@@ -11,17 +11,17 @@
             android:id="@+id/relativeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <SearchView
-                android:id="@+id/searchPhrase"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@drawable/shape_search" />
+<!--            <SearchView-->
+<!--                android:id="@+id/searchPhrase"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="5dp"-->
+<!--                android:background="@drawable/shape_search" />-->
             <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 android:id="@+id/swipe_container_dogs"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/searchPhrase">
+                >
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvDogs"
@@ -31,11 +31,18 @@
 
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+
             <include
                 android:id="@+id/layoutNotFound"
                 layout="@layout/not_found_layout" />
         </RelativeLayout>
 
-
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_search"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="10dp"/>
 
 </FrameLayout>

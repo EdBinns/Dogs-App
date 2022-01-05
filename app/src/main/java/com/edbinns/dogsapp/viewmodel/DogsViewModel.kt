@@ -1,5 +1,6 @@
 package com.edbinns.dogsapp.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,8 +13,12 @@ import com.edbinns.dogsapp.view.adapters.DogsAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONArray
+import org.json.JSONObject
 import java.util.ArrayList
 import javax.inject.Inject
+import javax.inject.Singleton
+
 
 @HiltViewModel
 class DogsViewModel @Inject constructor(
@@ -22,12 +27,17 @@ class DogsViewModel @Inject constructor(
     private val deleteFavoriteUseCase: DeleteFavoriteUseCase,
     private val addFavoriteUseCase: AddFavoriteUseCase,
     private val getByUrlUseCase: GetByUrlUseCase,
-): ViewModel() {
+    private val getResultSearchUseCase: GetResultSearchUseCase,
+    private val getDogsBySubBreedUseCase: GetDogsBySubBreedUseCase,
+) : ViewModel() {
 
+    val searchingList: LiveData<List<Dog>> = getResultSearchUseCase.getSearchResult
     val imagesList = MutableLiveData<List<Dog>>()
-    val isFavorite =  MutableLiveData<Boolean>()
 
-    fun getDogsImages(){
+    val isFavorite = MutableLiveData<Boolean>()
+
+
+    fun getDogsImages() {
         viewModelScope.launch {
             val result = getDogsImagesUseCase()
             validateResult(result)
@@ -40,23 +50,25 @@ class DogsViewModel @Inject constructor(
         println("favorite $favorite")
         viewModelScope.launch(Dispatchers.IO) {
             val temp: Favorite? = getByUrlUseCase(favorite.imageURL)
-            if (temp == null){
+            if (temp == null) {
                 addFavoriteUseCase(favorite)
                 isFavorite.postValue(true)
             }
 
         }
     }
-    fun deleteFavorite(data: Dog){
+
+    fun deleteFavorite(data: Dog) {
         viewModelScope.launch(Dispatchers.IO) {
-            val temp: Favorite?= getByUrlUseCase(data.imageURL)
+            val temp: Favorite? = getByUrlUseCase(data.imageURL)
             temp?.let {
                 deleteFavoriteUseCase(temp)
                 isFavorite.postValue(false)
             }
         }
     }
-    fun validateFavorite(data: Dog){
+
+    fun validateFavorite(data: Dog) {
         viewModelScope.launch(Dispatchers.IO) {
             val temp: Favorite? = getByUrlUseCase(data.imageURL)
             temp?.let {
@@ -66,34 +78,45 @@ class DogsViewModel @Inject constructor(
     }
 
 
-    fun getDogsByBreed(breed: String){
+    fun getDogsByBreed(breed: String) {
         viewModelScope.launch {
             val breedSplit = breed.split("-")
-            val result = getDogsByBreedUseCase(breedSplit[0])
+            val result = ArrayList<Dog>()
+            if (breedSplit.size <= 1) {
+                result.addAll(getDogsByBreedUseCase(breedSplit[0]))
+            } else {
+                result.addAll(getDogsBySubBreedUseCase(breedSplit[0], breedSplit[1]))
+            }
             validateResult(result)
+
         }
     }
 
-    private val validateResult: (List<Dog>) -> Unit = { result->
-        if(!result.isNullOrEmpty()){
-            imagesList.postValue(result)
+
+    val validateResult: (List<Dog>) -> Unit = { result ->
+        if (!result.isNullOrEmpty()) {
+            imagesList.value = result
         }
     }
 
-    fun isScrolling(manager: StaggeredGridLayoutManager, dogsAdapter: DogsAdapter, loading: Boolean): Boolean {
+    fun isScrolling(
+        manager: StaggeredGridLayoutManager,
+        dogsAdapter: DogsAdapter,
+        loading: Boolean
+    ): Boolean {
         val visibleItems = manager.childCount
         val total = dogsAdapter.itemCount
         var firstVisibleItems: IntArray? = null
         firstVisibleItems = manager.findFirstVisibleItemPositions(firstVisibleItems)
 
-        val pastVisibleItem =  if (firstVisibleItems != null && firstVisibleItems.isNotEmpty()) firstVisibleItems[0] else 0
+        val pastVisibleItem =
+            if (firstVisibleItems != null && firstVisibleItems.isNotEmpty()) firstVisibleItems[0] else 0
 
-        println("total $total")
-        println("visibleites $visibleItems")
-        println("pastVisibleItem $pastVisibleItem")
         if (!loading) {
             return ((visibleItems + pastVisibleItem) >= total)
         }
         return false
     }
+
+
 }

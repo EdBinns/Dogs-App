@@ -1,16 +1,11 @@
 package com.edbinns.dogsapp.view.fragments
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
-import android.widget.SearchView
-import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -23,7 +18,6 @@ import com.edbinns.dogsapp.models.Dog
 import com.edbinns.dogsapp.view.adapters.DogsAdapter
 import com.edbinns.dogsapp.view.adapters.ItemClickListener
 import com.edbinns.dogsapp.viewmodel.DogsViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -35,12 +29,13 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
     private val dogsViewModel: DogsViewModel by viewModels()
 
     private var loading = false
-    private var filter = ""
+    private var search = false
+    private var breed = ""
     private val dogsAdapter: DogsAdapter by lazy {
         DogsAdapter(this)
     }
-    private val manager : StaggeredGridLayoutManager by lazy {
-        StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL)
+    private val manager: StaggeredGridLayoutManager by lazy {
+        StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
     }
 
 
@@ -57,11 +52,14 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
         }
         binding.swipeContainerDogs.setOnRefreshListener {
             dogsAdapter.deleteData()
-            filter = ""
             dogsViewModel.getDogsImages()
+            search = false
         }
 
-        searchBreed()
+        binding.btnSearch.setOnClickListener {
+            findNavController().navigate(R.id.navSearchBreeds)
+        }
+
         return binding.root
     }
 
@@ -77,27 +75,38 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
 
     private fun observe() {
         dogsViewModel.imagesList.observe(viewLifecycleOwner, Observer { list ->
-            if (list.isNullOrEmpty()){
-                showNotFoundLayout()
-//                EMPTY_LIST.showMessage(requireView(), R.color.warning_color)
-            }else
-                hideNotFoundLayout()
-            dogsAdapter.updateData(list)
-            hideLoader()
+            dataChange(list)
+        })
+
+        dogsViewModel.searchingList.observe(viewLifecycleOwner, Observer { list ->
+            dogsAdapter.deleteData()
+            breed = list[0].breed
+            search = true
+            dataChange(list)
         })
     }
+
+    private fun dataChange(list: List<Dog>) {
+        if (list.isNullOrEmpty())
+            showNotFoundLayout()
+        else
+            hideNotFoundLayout()
+        dogsAdapter.updateData(list)
+        hideLoader()
+    }
+
     private fun scrollPaging() {
 
         binding.rvDogs.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             @SuppressLint("NewApi")
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if(dy > 0) {
-                    val result  = dogsViewModel.isScrolling(manager,dogsAdapter,loading)
-                    if(result){
+                if (dy > 0) {
+                    val result = dogsViewModel.isScrolling(manager, dogsAdapter, loading)
+                    if (result) {
                         showLoader()
-                        if(filter.isNotEmpty()){
-                            dogsViewModel.getDogsByBreed(filter)
-                        }else{
+                        if (search) {
+                            dogsViewModel.getDogsByBreed(breed)
+                        } else {
                             dogsViewModel.getDogsImages()
                         }
 
@@ -107,71 +116,22 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
             }
         })
     }
-    /**
-     * Función que se ejecuta cuando el usuario quiere realizar una busqueda de algún libro
-     * en especifico
-     */
-    private fun searchBreed() {
-        with(binding) {
-            searchPhrase.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                @SuppressLint("NewApi")
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    hideKeyboard()
-                    searchPhrase.clearFocus()
-                    search(query)
-                    return true
-                }
 
-                @RequiresApi(Build.VERSION_CODES.M)
-                override fun onQueryTextChange(newText: String?): Boolean {
-//                    search(newText)
-                    return true
-                }
-            })
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun search(query:String?){
-
-        showLoader()
-        dogsAdapter.deleteData()
-        if (!query.isNullOrEmpty()) {
-            filter = query
-            dogsViewModel.getDogsByBreed(query)
-        }else{
-            dogsViewModel.getDogsImages()
-        }
-        hideLoader()
-
-    }
-    /**
-     * Función que se ejecuta apenas el usuario inicia una busqueda, esta oculta el teclado
-     */
-    private fun hideKeyboard() {
-        if (view != null) {
-            //Aquí esta la magia
-            val input =
-                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            input.hideSoftInputFromWindow(requireView().windowToken, 0)
-            val menu: BottomNavigationView = requireActivity().findViewById(R.id.bnvMenu)
-            menu.visibility =  View.VISIBLE
-        }
-    }
     private fun showNotFoundLayout() {
         binding.layoutNotFound.notFoundLayout.visibility = View.VISIBLE
     }
-    private  fun hideNotFoundLayout(){
+
+    private fun hideNotFoundLayout() {
         binding.layoutNotFound.notFoundLayout.visibility = View.GONE
     }
 
-    private fun showLoader(){
+    private fun showLoader() {
         binding.swipeContainerDogs.isRefreshing = true
         loading = true
 
     }
 
-    private  fun hideLoader(){
+    private fun hideLoader() {
         binding.swipeContainerDogs.isRefreshing = false
         loading = false
     }
@@ -187,4 +147,6 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
         findNavController().navigate(R.id.navDialogDogs, bundle)
 
     }
+
+
 }

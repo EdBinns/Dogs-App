@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_navPetsFragment_to_navDialogPhrases"
             app:destination="@id/navDialogDogs" />
+        <action
+            android:id="@+id/action_navPetsFragment_to_navDialogSearcg"
+            app:destination="@id/navSearchBreeds" />
     </fragment>
 
     <fragment
@@ -42,5 +45,12 @@
         android:label="dialog_dogs"
         tools:layout="@layout/dialog_dogs"
     />
+
+    <dialog
+        android:id="@+id/navSearchBreeds"
+        android:name="com.edbinns.dogsapp.view.fragments.SearchDialog"
+        android:label="dialog_search"
+        tools:layout="@layout/dialog_search"
+        />
 
 </navigation>
