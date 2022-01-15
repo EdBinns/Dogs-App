@@ -18,6 +18,7 @@ import com.edbinns.dogsapp.utils.splitBreed
 import com.edbinns.dogsapp.view.adapters.DogsAdapter
 import com.edbinns.dogsapp.view.adapters.ItemClickListener
 import com.edbinns.dogsapp.viewmodel.DogsViewModel
+import com.edbinns.dogsapp.viewmodel.FavoriteViewModel
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -39,7 +40,6 @@ class DogsDialog : DialogFragment(), ItemClickListener<Dog> {
         StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
     }
     private val dogsViewModel: DogsViewModel by viewModels()
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
