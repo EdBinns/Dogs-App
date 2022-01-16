@@ -1,6 +1,7 @@
 package com.edbinns.dogsapp.view.fragments
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.edbinns.dogsapp.R
 import com.edbinns.dogsapp.databinding.FragmentDogsBinding
 import com.edbinns.dogsapp.models.Dog
+import com.edbinns.dogsapp.view.activitys.ItemDogActivity
 import com.edbinns.dogsapp.view.adapters.DogsAdapter
 import com.edbinns.dogsapp.view.adapters.ItemClickListener
 import com.edbinns.dogsapp.viewmodel.DogsViewModel
@@ -57,7 +59,9 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
         }
 
         binding.btnSearch.setOnClickListener {
-            findNavController().navigate(R.id.navSearchBreeds)
+            val dialog = SearchDialog()
+            fragmentManager?.let { manager -> dialog.show(manager, "SearchDialog") }
+
         }
 
         return binding.root
@@ -87,12 +91,14 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
     }
 
     private fun dataChange(list: List<Dog>) {
+        hideLoader()
         if (list.isNullOrEmpty())
             showNotFoundLayout()
-        else
+        else {
             hideNotFoundLayout()
-        dogsAdapter.updateData(list)
-        hideLoader()
+            dogsAdapter.updateData(list)
+        }
+
     }
 
     private fun scrollPaging() {
@@ -142,9 +148,12 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
     }
 
     override fun onCLickListener(data: Dog) {
-
+        println("data $data")
         val bundle = bundleOf("info" to data)
-        findNavController().navigate(R.id.navDialogDogs, bundle)
+        println(bundle)
+        val intent = Intent(activity, ItemDogActivity::class.java)
+        intent.putExtras(bundle)
+        startActivity(intent)
 
     }
 

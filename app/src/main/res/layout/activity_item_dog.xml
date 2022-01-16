@@ -7,7 +7,7 @@
     android:isScrollContainer="true"
     android:maxWidth="2000dp"
     android:minWidth="1200dp"
-    tools:context=".view.fragments.DogsDialog">
+    tools:context=".view.activitys.ItemDogActivity">
 
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -33,6 +33,14 @@
                 android:descendantFocusability="blocksDescendants"
                 android:orientation="vertical">
 
+
+                <ImageView
+                    android:id="@+id/ivExit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/itemImage"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_baseline_close_24" />
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cvImageDog"
                     android:layout_width="match_parent"
@@ -54,8 +62,10 @@
                                 android:id="@+id/ivDogPhotoItem"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:scaleType="fitXY"
+                                android:layout_centerHorizontal="true"
                                 android:contentDescription="@string/itemImage"
-                                android:scaleType="centerCrop" />
+                                />
 
                             <com.google.android.material.floatingactionbutton.FloatingActionButton
                                 android:id="@+id/btnAddFavorite"

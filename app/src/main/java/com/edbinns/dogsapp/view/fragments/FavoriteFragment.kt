@@ -1,5 +1,6 @@
 package com.edbinns.dogsapp.view.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import com.edbinns.dogsapp.databinding.FragmentFavoriteBinding
 import com.edbinns.dogsapp.models.Dog
 import com.edbinns.dogsapp.models.Favorite
 import com.edbinns.dogsapp.services.room.toDogsList
+import com.edbinns.dogsapp.view.activitys.ItemDogActivity
 import com.edbinns.dogsapp.view.adapters.DogsAdapter
 import com.edbinns.dogsapp.view.adapters.ItemClickListener
 import com.edbinns.dogsapp.viewmodel.FavoriteViewModel
@@ -106,7 +108,9 @@ class FavoriteFragment : Fragment(), ItemClickListener<Dog> {
 
     override fun onCLickListener(data: Dog) {
         val bundle = bundleOf("info" to data)
-        findNavController().navigate(R.id.navDialogDogs, bundle)
+        val intent = Intent(activity, ItemDogActivity::class.java)
+        intent.putExtras(bundle)
+        startActivity(intent)
     }
 
 }

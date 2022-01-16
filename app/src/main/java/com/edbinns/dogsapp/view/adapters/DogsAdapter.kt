@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.edbinns.dogsapp.databinding.ItemDogBinding
 import com.edbinns.dogsapp.models.Dog
 import com.edbinns.dogsapp.utils.splitBreed
@@ -38,13 +39,15 @@ class DogsAdapter(private val itemClickListener: ItemClickListener<Dog>) :
 
 
     fun updateData(data: List<Dog>) {
-        var newList = emptyList<Dog>()
-
+        val newList : ArrayList<Dog> = ArrayList()
+        newList.addAll(data)
         if(!imagesList.isNullOrEmpty()){
             imagesList.forEach {  item ->
-                newList = data.filter { dog -> dog.imageURL != item.imageURL}
+                newList.removeAll{ it.imageURL == item.imageURL }
             }
-            imagesList.addAll(newList)
+            if(newList.isNotEmpty()){
+                imagesList.addAll(newList)
+            }
         }else{
             imagesList.addAll(data)
         }
@@ -62,8 +65,8 @@ class DogsAdapter(private val itemClickListener: ItemClickListener<Dog>) :
         fun setImage(position: Int) {
             val dog = imagesList[position]
             context?.let {
-                val picasso = Picasso.get()
-                picasso.load(dog.imageURL)
+                Glide.with(it)
+                    .load(dog.imageURL)
                     .into(binding.ivDogPhoto)
 
 

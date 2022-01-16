@@ -1,38 +1,40 @@
-package com.edbinns.dogsapp.view.fragments
+package com.edbinns.dogsapp.view.activitys
 
+import android.content.Context
 import android.os.Build
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.util.AttributeSet
 import android.view.View
-import android.view.ViewGroup
-import androidx.core.os.bundleOf
-import androidx.fragment.app.DialogFragment
+import androidx.activity.viewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.edbinns.dogsapp.R
-import com.edbinns.dogsapp.databinding.DialogDogsBinding
+import com.edbinns.dogsapp.databinding.ActivityItemDogBinding
+import com.edbinns.dogsapp.databinding.ActivityMainBinding
 import com.edbinns.dogsapp.models.Dog
 import com.edbinns.dogsapp.utils.splitBreed
 import com.edbinns.dogsapp.view.adapters.DogsAdapter
 import com.edbinns.dogsapp.view.adapters.ItemClickListener
 import com.edbinns.dogsapp.viewmodel.DogsViewModel
-import com.edbinns.dogsapp.viewmodel.FavoriteViewModel
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+import android.content.Intent
+import androidx.core.os.bundleOf
+import com.bumptech.glide.Glide
+import com.edbinns.dogsapp.utils.toNonNullable
+
 
 @AndroidEntryPoint
-class DogsDialog : DialogFragment(), ItemClickListener<Dog> {
+class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
 
-    private var _binding: DialogDogsBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: ActivityItemDogBinding
 
     private var loading = false
     private var isFavorite = false
 
     private lateinit var dog: Dog
-
     private val dogsAdapter: DogsAdapter by lazy {
         DogsAdapter(this)
     }
@@ -40,14 +42,12 @@ class DogsDialog : DialogFragment(), ItemClickListener<Dog> {
         StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
     }
     private val dogsViewModel: DogsViewModel by viewModels()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityItemDogBinding.inflate(layoutInflater)
+        val view = binding.root
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = DialogDogsBinding.inflate(inflater, container, false)
-
-        dog = arguments?.getSerializable("info") as Dog
+        getInfo()
         setInfo(dog)
         clickAddFavorite(dog)
 
@@ -62,15 +62,17 @@ class DogsDialog : DialogFragment(), ItemClickListener<Dog> {
             dogsAdapter.deleteData()
             dogsViewModel.getDogsByBreed(dog.breed)
         }
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        binding.ivExit.setOnClickListener {
+            finish()
+        }
+        setContentView(view)
         showLoader()
         scrollPaging()
         observe()
     }
+
+
+
 
     private fun scrollPaging() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -88,7 +90,7 @@ class DogsDialog : DialogFragment(), ItemClickListener<Dog> {
     }
 
     private fun observe() {
-        dogsViewModel.imagesList.observe(viewLifecycleOwner, Observer { list ->
+        dogsViewModel.imagesList.observe(this, Observer { list ->
             if (list.isNullOrEmpty()) {
                 showNotFoundLayout()
 //                EMPTY_LIST.showMessage(requireView(), R.color.warning_color)
@@ -98,7 +100,7 @@ class DogsDialog : DialogFragment(), ItemClickListener<Dog> {
             hideLoader()
         })
 
-        dogsViewModel.isFavorite.observe(viewLifecycleOwner, Observer { result ->
+        dogsViewModel.isFavorite.observe(this, Observer { result ->
             isFavorite = result
             println("favorite observer $isFavorite")
             if (isFavorite) {
@@ -121,14 +123,17 @@ class DogsDialog : DialogFragment(), ItemClickListener<Dog> {
         }
     }
 
+    private fun getInfo(){
+        val data = intent
+        dog = data.extras?.get("info") as Dog
+//        (data.getBundleExtra("info") as Dog?).also { dog = i }
+    }
     private fun setInfo(dog: Dog) {
-        val picasso = Picasso.get()
-        picasso.load(dog.imageURL)
-            .resize(400,600)
+        Glide.with(this)
+            .load(dog.imageURL)
             .into(binding.ivDogPhotoItem)
         binding.tvDogBreed.text = dog.splitBreed()
     }
-
     private fun showLoader() {
         binding.swipeContainerDogs.isRefreshing = true
         loading = true
@@ -147,14 +152,10 @@ class DogsDialog : DialogFragment(), ItemClickListener<Dog> {
     private fun hideNotFoundLayout() {
         binding.layoutNotFound.notFoundLayout.visibility = View.GONE
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     override fun onCLickListener(data: Dog) {
         val bundle = bundleOf("info" to data)
-        findNavController().navigate(R.id.navDialogDogs, bundle)
+        val intent = Intent(this, ItemDogActivity::class.java)
+        intent.putExtras(bundle)
+        startActivity(intent)
     }
 }

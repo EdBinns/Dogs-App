@@ -13,9 +13,7 @@
         <action
             android:id="@+id/action_navPetsFragment_to_navFavoritesFragment"
             app:destination="@id/navFavoritesFragment" />
-        <action
-            android:id="@+id/action_navPetsFragment_to_navDialogPhrases"
-            app:destination="@id/navDialogDogs" />
+
         <action
             android:id="@+id/action_navPetsFragment_to_navDialogSearcg"
             app:destination="@id/navSearchBreeds" />
@@ -38,13 +36,6 @@
         tools:layout="@layout/fragment_facts">
     </fragment>
 
-
-    <dialog
-        android:id="@+id/navDialogDogs"
-        android:name="com.edbinns.dogsapp.view.fragments.DogsDialog"
-        android:label="dialog_dogs"
-        tools:layout="@layout/dialog_dogs"
-    />
 
     <dialog
         android:id="@+id/navSearchBreeds"
