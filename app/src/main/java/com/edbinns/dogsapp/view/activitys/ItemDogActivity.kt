@@ -21,8 +21,10 @@ import com.edbinns.dogsapp.viewmodel.DogsViewModel
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import android.content.Intent
+import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import com.bumptech.glide.Glide
+import com.edbinns.dogsapp.utils.MessageFactory
 import com.edbinns.dogsapp.utils.toNonNullable
 
 
@@ -42,6 +44,7 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
         StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
     }
     private val dogsViewModel: DogsViewModel by viewModels()
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityItemDogBinding.inflate(layoutInflater)
@@ -89,6 +92,7 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun observe() {
         dogsViewModel.imagesList.observe(this, Observer { list ->
             if (list.isNullOrEmpty()) {
@@ -108,6 +112,12 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
             } else {
                 binding.btnAddFavorite.setImageResource(R.drawable.ic_favorite_border)
             }
+        })
+
+        dogsViewModel.errorMessage.observe(this, Observer { messageType ->
+            MessageFactory.getSnackBar(messageType,binding.root).show()
+            hideLoader()
+            showNotFoundLayout()
         })
     }
 

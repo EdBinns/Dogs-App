@@ -9,6 +9,7 @@ import com.edbinns.dogsapp.domain.*
 import com.edbinns.dogsapp.models.Dog
 import com.edbinns.dogsapp.models.Favorite
 import com.edbinns.dogsapp.services.room.toFavorites
+import com.edbinns.dogsapp.utils.MessageType
 import com.edbinns.dogsapp.view.adapters.DogsAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -29,10 +30,12 @@ class DogsViewModel @Inject constructor(
     private val getByUrlUseCase: GetByUrlUseCase,
     private val getResultSearchUseCase: GetResultSearchUseCase,
     private val getDogsBySubBreedUseCase: GetDogsBySubBreedUseCase,
+    private val getErrorUseCase: GetErrorUseCase
 ) : ViewModel() {
 
     val searchingList: LiveData<List<Dog>> = getResultSearchUseCase.getSearchResult
     val imagesList = MutableLiveData<List<Dog>>()
+    val errorMessage: LiveData<MessageType> = getErrorUseCase.getErrorMessage
 
     val isFavorite = MutableLiveData<Boolean>()
 

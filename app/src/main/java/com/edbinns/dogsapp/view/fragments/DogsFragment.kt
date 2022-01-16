@@ -2,11 +2,13 @@ package com.edbinns.dogsapp.view.fragments
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.edbinns.dogsapp.R
 import com.edbinns.dogsapp.databinding.FragmentDogsBinding
 import com.edbinns.dogsapp.models.Dog
+import com.edbinns.dogsapp.utils.MessageFactory
 import com.edbinns.dogsapp.view.activitys.ItemDogActivity
 import com.edbinns.dogsapp.view.adapters.DogsAdapter
 import com.edbinns.dogsapp.view.adapters.ItemClickListener
@@ -68,6 +71,7 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showLoader()
@@ -77,6 +81,7 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun observe() {
         dogsViewModel.imagesList.observe(viewLifecycleOwner, Observer { list ->
             dataChange(list)
@@ -88,17 +93,22 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
             search = true
             dataChange(list)
         })
+
+        dogsViewModel.errorMessage.observe(viewLifecycleOwner, Observer { messageType ->
+            MessageFactory.getSnackBar(messageType,requireView()).show()
+            hideLoader()
+            showNotFoundLayout()
+        })
     }
 
     private fun dataChange(list: List<Dog>) {
-        hideLoader()
         if (list.isNullOrEmpty())
             showNotFoundLayout()
         else {
             hideNotFoundLayout()
             dogsAdapter.updateData(list)
         }
-
+        hideLoader()
     }
 
     private fun scrollPaging() {

@@ -11,4 +11,6 @@
     <color name="lightRed">#E6A7A8</color>
     <color name="lightGreen">#B5ECB8</color>
     <color name="colorGreen">#4CAF50</color>
+    <color name="succes">#4CAF50</color>
+    <color name="error">#E91E4D</color>
 </resources>

@@ -16,4 +16,5 @@
     <string name="sub_raza">Filtrar por Sub-raza</string>
     <string name="search">Buscar</string>
     <string name="tab_2"></string>
+    <string name="failed_get_images">Hubo un error al obtener las imagenes, intenta de nuevo</string>
 </resources>

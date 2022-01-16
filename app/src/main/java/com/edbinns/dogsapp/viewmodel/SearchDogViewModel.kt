@@ -57,8 +57,12 @@ class SearchDogViewModel @Inject constructor(
 
     private fun getAllBreeds() {
         viewModelScope.launch(Dispatchers.IO) {
-            allBreedsJSON = getAllBreedsUseCase()
-            getBreeds(allBreedsJSON)
+            try {
+                allBreedsJSON = getAllBreedsUseCase()
+                getBreeds(allBreedsJSON)
+            }catch (e:KotlinNullPointerException){
+                println("Fallo la peticion")
+            }
         }
     }
 
