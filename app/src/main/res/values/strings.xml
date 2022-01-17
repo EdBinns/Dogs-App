@@ -17,4 +17,5 @@
     <string name="search">Buscar</string>
     <string name="tab_2"></string>
     <string name="failed_get_images">Hubo un error al obtener las imagenes, intenta de nuevo</string>
+    <string name="internet_problems" >No hay conexión a internet, asegurate estar conectado a una red</string>
 </resources>

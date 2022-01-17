@@ -124,7 +124,9 @@
                     android:id="@+id/layoutNotFound"
                     layout="@layout/not_found_layout" />
 
-
+                <include
+                    android:id="@+id/layoutInternetProblems"
+                    layout="@layout/internet_problems_layout" />
             </LinearLayout>
 
 

@@ -14,7 +14,6 @@ import com.edbinns.dogsapp.R
 import com.edbinns.dogsapp.databinding.ActivityItemDogBinding
 import com.edbinns.dogsapp.databinding.ActivityMainBinding
 import com.edbinns.dogsapp.models.Dog
-import com.edbinns.dogsapp.utils.splitBreed
 import com.edbinns.dogsapp.view.adapters.DogsAdapter
 import com.edbinns.dogsapp.view.adapters.ItemClickListener
 import com.edbinns.dogsapp.viewmodel.DogsViewModel
@@ -24,8 +23,8 @@ import android.content.Intent
 import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import com.bumptech.glide.Glide
-import com.edbinns.dogsapp.utils.MessageFactory
-import com.edbinns.dogsapp.utils.toNonNullable
+import com.bumptech.glide.request.target.Target
+import com.edbinns.dogsapp.utils.*
 
 
 @AndroidEntryPoint
@@ -49,7 +48,6 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
         super.onCreate(savedInstanceState)
         binding = ActivityItemDogBinding.inflate(layoutInflater)
         val view = binding.root
-
         getInfo()
         setInfo(dog)
         clickAddFavorite(dog)
@@ -63,7 +61,14 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
         }
         binding.swipeContainerDogs.setOnRefreshListener {
             dogsAdapter.deleteData()
-            dogsViewModel.getDogsByBreed(dog.breed)
+            if(isConnected()) {
+                dogsViewModel.getDogsByBreed(dog.breed)
+                hideLayout()
+            }
+            else {
+                hideLoader()
+                showLayout()
+            }
         }
         binding.ivExit.setOnClickListener {
             finish()
@@ -119,6 +124,7 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
             hideLoader()
             showNotFoundLayout()
         })
+
     }
 
     private fun clickAddFavorite(item: Dog) {
@@ -141,13 +147,24 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
     private fun setInfo(dog: Dog) {
         Glide.with(this)
             .load(dog.imageURL)
+            .override(Target.SIZE_ORIGINAL)
             .into(binding.ivDogPhotoItem)
         binding.tvDogBreed.text = dog.splitBreed()
     }
+
+    private fun isConnected():Boolean{
+        return NetWorkConnectivity.checkForInternet(this)
+    }
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun showLoader() {
         binding.swipeContainerDogs.isRefreshing = true
         loading = true
-        dogsViewModel.getDogsByBreed(dog.breed)
+        if(isConnected()){
+            dogsViewModel.getDogsByBreed(dog.breed)
+        }else{
+            MessageFactory.getSnackBar(MessageType.NETWORKCONNECTIOERRORMESSAGE,binding.root)
+            hideLoader()
+        }
     }
 
     private fun hideLoader() {
@@ -161,6 +178,13 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
 
     private fun hideNotFoundLayout() {
         binding.layoutNotFound.notFoundLayout.visibility = View.GONE
+    }
+    private fun showLayout() {
+        binding.layoutInternetProblems.notFoundLayout.visibility = View.VISIBLE
+    }
+
+    private fun hideLayout() {
+        binding.layoutInternetProblems.notFoundLayout.visibility = View.GONE
     }
     override fun onCLickListener(data: Dog) {
         val bundle = bundleOf("info" to data)

@@ -1,5 +1,6 @@
 package com.edbinns.dogsapp.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,7 @@ import com.edbinns.dogsapp.models.Dog
 import com.edbinns.dogsapp.models.Favorite
 import com.edbinns.dogsapp.services.room.toFavorites
 import com.edbinns.dogsapp.utils.MessageType
+import com.edbinns.dogsapp.utils.NetWorkConnectivity
 import com.edbinns.dogsapp.view.adapters.DogsAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +40,6 @@ class DogsViewModel @Inject constructor(
     val errorMessage: LiveData<MessageType> = getErrorUseCase.getErrorMessage
 
     val isFavorite = MutableLiveData<Boolean>()
-
 
     fun getDogsImages() {
         viewModelScope.launch {

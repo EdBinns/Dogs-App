@@ -8,7 +8,7 @@ import retrofit2.http.Path
 
 interface DogImageApiService {
 
-    @GET("breeds/image/rando/{number}")
+    @GET("breeds/image/random/{number}")
     suspend fun getDogImageList(@Path("number") number: String) : Response<DogsResponse>
 
     @GET("breed/{breedName}/images/random/{number}")

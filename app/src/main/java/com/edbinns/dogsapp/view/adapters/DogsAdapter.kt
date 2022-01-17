@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.edbinns.dogsapp.databinding.ItemDogBinding
 import com.edbinns.dogsapp.models.Dog
 import com.edbinns.dogsapp.utils.splitBreed
@@ -67,6 +68,7 @@ class DogsAdapter(private val itemClickListener: ItemClickListener<Dog>) :
             context?.let {
                 Glide.with(it)
                     .load(dog.imageURL)
+
                     .into(binding.ivDogPhoto)
 
 

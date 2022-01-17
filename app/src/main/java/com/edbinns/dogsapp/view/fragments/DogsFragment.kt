@@ -19,6 +19,8 @@ import com.edbinns.dogsapp.R
 import com.edbinns.dogsapp.databinding.FragmentDogsBinding
 import com.edbinns.dogsapp.models.Dog
 import com.edbinns.dogsapp.utils.MessageFactory
+import com.edbinns.dogsapp.utils.MessageType
+import com.edbinns.dogsapp.utils.NetWorkConnectivity
 import com.edbinns.dogsapp.view.activitys.ItemDogActivity
 import com.edbinns.dogsapp.view.adapters.DogsAdapter
 import com.edbinns.dogsapp.view.adapters.ItemClickListener
@@ -44,6 +46,7 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -57,7 +60,13 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
         }
         binding.swipeContainerDogs.setOnRefreshListener {
             dogsAdapter.deleteData()
-            dogsViewModel.getDogsImages()
+            if (isConnected()){
+                dogsViewModel.getDogsImages()
+                hideLayout()
+            }else{
+                showErrorMessage()
+            }
+
             search = false
         }
 
@@ -75,9 +84,16 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showLoader()
-        dogsViewModel.getDogsImages()
-        scrollPaging()
         observe()
+        if (isConnected()){
+            dogsViewModel.getDogsImages()
+            hideLayout()
+        }else{
+            showErrorMessage()
+        }
+
+        scrollPaging()
+
     }
 
 
@@ -99,6 +115,7 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
             hideLoader()
             showNotFoundLayout()
         })
+
     }
 
     private fun dataChange(list: List<Dog>) {
@@ -120,10 +137,10 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
                     val result = dogsViewModel.isScrolling(manager, dogsAdapter, loading)
                     if (result) {
                         showLoader()
-                        if (search) {
-                            dogsViewModel.getDogsByBreed(breed)
-                        } else {
-                            dogsViewModel.getDogsImages()
+                        if (isConnected()){
+                            getData()
+                        }else{
+                            hideLoader()
                         }
 
                     }
@@ -132,6 +149,21 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
             }
         })
     }
+    private fun getData(){
+        if (search) {
+            dogsViewModel.getDogsByBreed(breed)
+        } else {
+            dogsViewModel.getDogsImages()
+        }
+    }
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun showErrorMessage(){
+        hideLoader()
+        showLayout()
+    }
+    private fun isConnected():Boolean{
+        return NetWorkConnectivity.checkForInternet(requireContext())
+    }
 
     private fun showNotFoundLayout() {
         binding.layoutNotFound.notFoundLayout.visibility = View.VISIBLE
@@ -139,6 +171,13 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
 
     private fun hideNotFoundLayout() {
         binding.layoutNotFound.notFoundLayout.visibility = View.GONE
+    }
+    private fun showLayout() {
+        binding.layoutInternetProblems.notFoundLayout.visibility = View.VISIBLE
+    }
+
+    private fun hideLayout() {
+        binding.layoutInternetProblems.notFoundLayout.visibility = View.GONE
     }
 
     private fun showLoader() {

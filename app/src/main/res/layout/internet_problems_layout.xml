@@ -12,17 +12,18 @@
         android:layout_height="120dp"
         android:src="@drawable/dog"
         android:scaleType="centerCrop"
-       android:layout_centerInParent="true"
+        android:layout_centerInParent="true"
         android:contentDescription="@string/not_found_image"
         />
 
     <TextView
-        android:id="@+id/tvNotFound"
+        android:id="@+id/tvtext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/failed_get_images"
+        android:text="@string/internet_problems"
         android:textSize="22sp"
         android:layout_centerInParent="true"
+        android:gravity="center"
         android:layout_below="@+id/imvNotFound"
         />
 

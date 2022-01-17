@@ -29,9 +29,7 @@ class SearchDogViewModel @Inject constructor(
     val isSet = MutableLiveData<Boolean>()
 
 
-    init {
-        getAllBreeds()
-    }
+
 
     private lateinit var allBreedsJSON: JSONObject
 
@@ -55,11 +53,14 @@ class SearchDogViewModel @Inject constructor(
         allSubBreeds.postValue(list)
     }
 
-    private fun getAllBreeds() {
+     fun getAllBreeds(isConnected: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                allBreedsJSON = getAllBreedsUseCase()
-                getBreeds(allBreedsJSON)
+                if (isConnected){
+                    allBreedsJSON = getAllBreedsUseCase()
+                    getBreeds(allBreedsJSON)
+                }
+
             }catch (e:KotlinNullPointerException){
                 println("Fallo la peticion")
             }

@@ -12,6 +12,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.edbinns.dogsapp.databinding.DialogSearchBinding
+import com.edbinns.dogsapp.utils.NetWorkConnectivity
 import com.edbinns.dogsapp.viewmodel.SearchDogViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,7 +39,8 @@ class SearchDialog : DialogFragment() {
         // Inflate the layout for this fragment
         _binding = DialogSearchBinding.inflate(inflater, container, false)
         setUpSpinnerBreed()
-
+        val result = NetWorkConnectivity.checkForInternet(requireContext())
+        dogsViewModel.getAllBreeds(result)
         observer()
         listener()
         return binding.root

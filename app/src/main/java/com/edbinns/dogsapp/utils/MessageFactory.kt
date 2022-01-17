@@ -6,18 +6,24 @@ import androidx.annotation.RequiresApi
 import com.edbinns.dogsapp.R
 import com.google.android.material.snackbar.Snackbar
 
-enum class MessageType{
+enum class MessageType {
     FAILEDGETIMAGESMESSAGES,
     DEFAULTMESSAGE,
-
+    NETWORKCONNECTIOERRORMESSAGE
 }
+
 object MessageFactory {
 
     @RequiresApi(Build.VERSION_CODES.M)
     fun getSnackBar(type: MessageType, view: View) =
-        when(type){
-            MessageType.FAILEDGETIMAGESMESSAGES -> setSnackBar(view,R.string.failed_get_images, R.color.error)
-            MessageType.DEFAULTMESSAGE -> setSnackBar(view,R.string.not_found_image, R.color.error)
+        when (type) {
+            MessageType.FAILEDGETIMAGESMESSAGES -> setSnackBar(
+                view,
+                R.string.failed_get_images,
+                R.color.error
+            )
+            MessageType.DEFAULTMESSAGE -> setSnackBar(view, R.string.not_found_image, R.color.error)
+            MessageType.NETWORKCONNECTIOERRORMESSAGE -> setSnackBar(view, R.string.internet_problems, R.color.error)
         }
 
 
