@@ -1,5 +1,9 @@
 package com.edbinns.dogsapp.view.activitys
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.Context
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -20,15 +24,21 @@ import com.edbinns.dogsapp.viewmodel.DogsViewModel
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import android.content.Intent
+import android.graphics.Color
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.os.bundleOf
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
 import com.edbinns.dogsapp.utils.*
+import com.edbinns.dogsapp.utils.Constants.CHANNEL_ID
+import com.edbinns.dogsapp.utils.Constants.CHANNEL_NAME
+import com.edbinns.dogsapp.utils.Constants.NOTIFICATION_ID
 
 
 @AndroidEntryPoint
-class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
+class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
 
     private lateinit var binding: ActivityItemDogBinding
 
@@ -43,6 +53,7 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
         StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
     }
     private val dogsViewModel: DogsViewModel by viewModels()
+
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +64,7 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
         clickAddFavorite(dog)
 
         dogsViewModel.validateFavorite(dog)
-        binding.rvDogs.apply{
+        binding.rvDogs.apply {
             layoutManager = manager
             adapter = dogsAdapter
             setHasFixedSize(false);
@@ -61,11 +72,10 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
         }
         binding.swipeContainerDogs.setOnRefreshListener {
             dogsAdapter.deleteData()
-            if(isConnected()) {
+            if (isConnected()) {
                 dogsViewModel.getDogsByBreed(dog.breed)
                 hideLayout()
-            }
-            else {
+            } else {
                 hideLoader()
                 showLayout()
             }
@@ -78,8 +88,6 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
         scrollPaging()
         observe()
     }
-
-
 
 
     private fun scrollPaging() {
@@ -102,7 +110,6 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
         dogsViewModel.imagesList.observe(this, Observer { list ->
             if (list.isNullOrEmpty()) {
                 showNotFoundLayout()
-//                EMPTY_LIST.showMessage(requireView(), R.color.warning_color)
             } else
                 hideNotFoundLayout()
             dogsAdapter.updateData(list)
@@ -120,7 +127,7 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
         })
 
         dogsViewModel.errorMessage.observe(this, Observer { messageType ->
-            MessageFactory.getSnackBar(messageType,binding.root).show()
+            MessageFactory.getSnackBar(messageType, binding.root).show()
             hideLoader()
             showNotFoundLayout()
         })
@@ -139,11 +146,11 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
         }
     }
 
-    private fun getInfo(){
+    private fun getInfo() {
         val data = intent
         dog = data.extras?.get("info") as Dog
-//        (data.getBundleExtra("info") as Dog?).also { dog = i }
     }
+
     private fun setInfo(dog: Dog) {
         Glide.with(this)
             .load(dog.imageURL)
@@ -152,17 +159,18 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
         binding.tvDogBreed.text = dog.splitBreed()
     }
 
-    private fun isConnected():Boolean{
+    private fun isConnected(): Boolean {
         return NetWorkConnectivity.checkForInternet(this)
     }
+
     @RequiresApi(Build.VERSION_CODES.M)
     private fun showLoader() {
         binding.swipeContainerDogs.isRefreshing = true
         loading = true
-        if(isConnected()){
+        if (isConnected()) {
             dogsViewModel.getDogsByBreed(dog.breed)
-        }else{
-            MessageFactory.getSnackBar(MessageType.NETWORKCONNECTIOERRORMESSAGE,binding.root)
+        } else {
+            MessageFactory.getSnackBar(MessageType.NETWORKCONNECTIOERRORMESSAGE, binding.root)
             hideLoader()
         }
     }
@@ -179,6 +187,7 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
     private fun hideNotFoundLayout() {
         binding.layoutNotFound.notFoundLayout.visibility = View.GONE
     }
+
     private fun showLayout() {
         binding.layoutInternetProblems.notFoundLayout.visibility = View.VISIBLE
     }
@@ -186,10 +195,14 @@ class ItemDogActivity : AppCompatActivity() , ItemClickListener<Dog> {
     private fun hideLayout() {
         binding.layoutInternetProblems.notFoundLayout.visibility = View.GONE
     }
+
     override fun onCLickListener(data: Dog) {
         val bundle = bundleOf("info" to data)
         val intent = Intent(this, ItemDogActivity::class.java)
         intent.putExtras(bundle)
         startActivity(intent)
     }
+
+
+
 }

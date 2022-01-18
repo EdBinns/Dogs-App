@@ -14,7 +14,8 @@ class FactsRepository @Inject constructor(private val dogsFactsApiService: DogFa
     suspend fun getDogsFacts(): List<String> {
         return withContext(Dispatchers.IO) {
             val response = dogsFactsApiService.getDogsFactsFromService(FACTS_API_BASE_URl,LIMIT_IMAGE_DOGS)
-
+            println("response facts $response")
+            println("response facts body ${response.body()}")
 
             emptyList()
 //            val responseList = response.body()?.imageList

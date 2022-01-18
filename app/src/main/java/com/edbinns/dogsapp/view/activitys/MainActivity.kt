@@ -49,10 +49,4 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-//    private fun configNav() {
-//        NavigationUI.setupWithNavController(binding.bnvMenu, Navigation.findNavController(this, R.id.fragContent))
-////
-////        val navController = findNavController(R.id.fragContent)
-////        binding.bnvMenu.setupWithNavController(navController)
-//    }
 }
