@@ -25,6 +25,9 @@ import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
+import android.provider.MediaStore
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.annotation.RequiresApi
@@ -77,7 +80,7 @@ class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
         getInfo()
         setInfo(dog)
         clickAddFavorite(dog)
-
+        download()
         dogsViewModel.validateFavorite(dog)
         binding.fab.setOnClickListener { view ->
             onAddButtonClick()
@@ -261,6 +264,21 @@ class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
             }
         }
 
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun download(){
+        with(binding){
+
+            fabDownload.setOnClickListener {
+                val drawable = ivDogPhotoItem.drawable
+                val bitmap = (drawable as BitmapDrawable).bitmap
+                val imagePath = MediaStore.Images.Media.insertImage(contentResolver, bitmap, dog.breed, dog.breed )
+                val URI = Uri.parse(imagePath)
+                MessageFactory.getSnackBar(MessageType.DOWNLOADMESSAGE,root).show()
+                println(URI)
+            }
+        }
     }
 
     override fun onCLickListener(data: Dog) {

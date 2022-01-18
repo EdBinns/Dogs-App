@@ -9,7 +9,8 @@ import com.google.android.material.snackbar.Snackbar
 enum class MessageType {
     FAILEDGETIMAGESMESSAGES,
     DEFAULTMESSAGE,
-    NETWORKCONNECTIOERRORMESSAGE
+    NETWORKCONNECTIOERRORMESSAGE,
+    DOWNLOADMESSAGE
 }
 
 object MessageFactory {
@@ -24,6 +25,7 @@ object MessageFactory {
             )
             MessageType.DEFAULTMESSAGE -> setSnackBar(view, R.string.not_found_image, R.color.error)
             MessageType.NETWORKCONNECTIOERRORMESSAGE -> setSnackBar(view, R.string.internet_problems, R.color.error)
+            MessageType.DOWNLOADMESSAGE -> setSnackBar(view, R.string.download, R.color.colorGreen)
         }
 
 
