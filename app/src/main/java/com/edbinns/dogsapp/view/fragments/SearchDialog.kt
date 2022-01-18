@@ -36,7 +36,7 @@ class SearchDialog : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+
         _binding = DialogSearchBinding.inflate(inflater, container, false)
         setUpSpinnerBreed()
         val result = NetWorkConnectivity.checkForInternet(requireContext())

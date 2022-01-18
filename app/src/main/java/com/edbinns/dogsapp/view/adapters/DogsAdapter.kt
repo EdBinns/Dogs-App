@@ -2,19 +2,20 @@ package com.edbinns.dogsapp.view.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.signature.ObjectKey
+import com.edbinns.dogsapp.R
 import com.edbinns.dogsapp.databinding.ItemDogBinding
 import com.edbinns.dogsapp.models.Dog
 import com.edbinns.dogsapp.utils.splitBreed
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.util.ArrayList
 
 class DogsAdapter(private val itemClickListener: ItemClickListener<Dog>) :
@@ -40,16 +41,16 @@ class DogsAdapter(private val itemClickListener: ItemClickListener<Dog>) :
 
 
     fun updateData(data: List<Dog>) {
-        val newList : ArrayList<Dog> = ArrayList()
+        val newList: ArrayList<Dog> = ArrayList()
         newList.addAll(data)
-        if(!imagesList.isNullOrEmpty()){
-            imagesList.forEach {  item ->
-                newList.removeAll{ it.imageURL == item.imageURL }
+        if (!imagesList.isNullOrEmpty()) {
+            imagesList.forEach { item ->
+                newList.removeAll { it.imageURL == item.imageURL }
             }
-            if(newList.isNotEmpty()){
+            if (newList.isNotEmpty()) {
                 imagesList.addAll(newList)
             }
-        }else{
+        } else {
             imagesList.addAll(data)
         }
         notifyDataSetChanged()
@@ -64,11 +65,19 @@ class DogsAdapter(private val itemClickListener: ItemClickListener<Dog>) :
     inner class DogsViewHolder(val binding: ItemDogBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun setImage(position: Int) {
+
+
             val dog = imagesList[position]
             context?.let {
+
+
                 Glide.with(it)
                     .load(dog.imageURL)
-
+                    .apply(
+                        RequestOptions()
+                            .placeholder(R.drawable.dog_face)
+                            .signature(ObjectKey("item $position"))
+                    )
                     .into(binding.ivDogPhoto)
 
 
@@ -77,6 +86,8 @@ class DogsAdapter(private val itemClickListener: ItemClickListener<Dog>) :
             binding.itemDog.setOnClickListener {
                 itemClickListener.onCLickListener(dog)
             }
+
+
         }
     }
 
