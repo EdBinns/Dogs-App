@@ -25,6 +25,8 @@ import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import android.content.Intent
 import android.graphics.Color
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -53,6 +55,19 @@ class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
         StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
     }
     private val dogsViewModel: DogsViewModel by viewModels()
+    private val rotateOpen: Animation by lazy {
+        AnimationUtils.loadAnimation(this, R.anim.rotate_open_anim)
+    }
+    private val rotateClose: Animation by lazy {
+        AnimationUtils.loadAnimation(this, R.anim.rotate_close_anim)
+    }
+    private val fromBottom: Animation by lazy {
+        AnimationUtils.loadAnimation(this, R.anim.from_bottom_anim)
+    }
+    private val toBottom: Animation by lazy {
+        AnimationUtils.loadAnimation(this, R.anim.to_bottom_anim)
+    }
+    private var clicked : Boolean = false
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +79,9 @@ class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
         clickAddFavorite(dog)
 
         dogsViewModel.validateFavorite(dog)
+        binding.fab.setOnClickListener { view ->
+            onAddButtonClick()
+        }
         binding.rvDogs.apply {
             layoutManager = manager
             adapter = dogsAdapter
@@ -88,6 +106,8 @@ class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
         scrollPaging()
         observe()
     }
+
+
 
 
     private fun scrollPaging() {
@@ -194,6 +214,53 @@ class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
 
     private fun hideLayout() {
         binding.layoutInternetProblems.notFoundLayout.visibility = View.GONE
+    }
+
+    private fun onAddButtonClick() {
+        setVisibility(clicked)
+        setAnimation(clicked)
+        setClickable(clicked)
+        clicked = !clicked
+    }
+    private fun setAnimation(clicked :Boolean) {
+        with(binding){
+            if(!clicked){
+                fabDownload.startAnimation(fromBottom)
+                btnAddFavorite.startAnimation(fromBottom)
+                fab.startAnimation(rotateOpen)
+            }else{
+                fabDownload.startAnimation(toBottom)
+                btnAddFavorite.startAnimation(toBottom)
+                fab.startAnimation(rotateClose)
+            }
+        }
+
+    }
+
+    private fun setVisibility(clicked :Boolean) {
+        with(binding){
+            if(!clicked){
+                fabDownload.visibility = View.VISIBLE
+                btnAddFavorite.visibility = View.VISIBLE
+            }else{
+                fabDownload.visibility = View.INVISIBLE
+                btnAddFavorite.visibility = View.INVISIBLE
+            }
+        }
+
+    }
+
+    private fun setClickable(clicked :Boolean){
+        with(binding){
+            if(!clicked){
+                fabDownload.isClickable = true
+                btnAddFavorite.isClickable = true
+            }else{
+                fabDownload.isClickable = false
+                btnAddFavorite.isClickable = false
+            }
+        }
+
     }
 
     override fun onCLickListener(data: Dog) {

@@ -41,18 +41,13 @@ class DogsAdapter(private val itemClickListener: ItemClickListener<Dog>) :
 
 
     fun updateData(data: List<Dog>) {
-        val newList: ArrayList<Dog> = ArrayList()
-        newList.addAll(data)
-        if (!imagesList.isNullOrEmpty()) {
-            imagesList.forEach { item ->
-                newList.removeAll { it.imageURL == item.imageURL }
-            }
-            if (newList.isNotEmpty()) {
-                imagesList.addAll(newList)
-            }
-        } else {
-            imagesList.addAll(data)
-        }
+
+        val mySet = setOf(*(imagesList.toArray()),*(data.toTypedArray()))
+        imagesList.clear()
+
+        val list = mySet.map {it as Dog }
+        imagesList.addAll(list)
+
         notifyDataSetChanged()
     }
 

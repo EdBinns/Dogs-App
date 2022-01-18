@@ -2,10 +2,8 @@ package com.edbinns.dogsapp.view.activitys
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.navigation.Navigation
-import androidx.navigation.ui.NavigationUI
+import androidx.activity.viewModels
 import androidx.viewpager2.widget.ViewPager2
-import com.edbinns.dogsapp.R
 import com.edbinns.dogsapp.databinding.ActivityMainBinding
 import com.edbinns.dogsapp.view.adapters.FragmentAdapter
 import com.google.android.material.tabs.TabLayout
