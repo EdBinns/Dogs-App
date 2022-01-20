@@ -1,45 +1,31 @@
 package com.edbinns.dogsapp.view.activitys
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.TaskStackBuilder
-import android.content.Context
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.AttributeSet
 import android.view.View
 import androidx.activity.viewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.edbinns.dogsapp.R
 import com.edbinns.dogsapp.databinding.ActivityItemDogBinding
-import com.edbinns.dogsapp.databinding.ActivityMainBinding
 import com.edbinns.dogsapp.models.Dog
 import com.edbinns.dogsapp.view.adapters.DogsAdapter
 import com.edbinns.dogsapp.view.adapters.ItemClickListener
 import com.edbinns.dogsapp.viewmodel.DogsViewModel
-import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.provider.MediaStore
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.os.bundleOf
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
 import com.edbinns.dogsapp.utils.*
-import com.edbinns.dogsapp.utils.Constants.CHANNEL_ID
-import com.edbinns.dogsapp.utils.Constants.CHANNEL_NAME
-import com.edbinns.dogsapp.utils.Constants.NOTIFICATION_ID
+import com.edbinns.dogsapp.viewmodel.FavoriteViewModel
 
 
 @AndroidEntryPoint
@@ -58,6 +44,7 @@ class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
         StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
     }
     private val dogsViewModel: DogsViewModel by viewModels()
+    private val favoriteViewModel: FavoriteViewModel by viewModels()
     private val rotateOpen: Animation by lazy {
         AnimationUtils.loadAnimation(this, R.anim.rotate_open_anim)
     }
@@ -81,7 +68,17 @@ class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
         setInfo(dog)
         clickAddFavorite(dog)
         download()
-        dogsViewModel.validateFavorite(dog)
+        favoriteViewModel.validateFavorite(dog)
+        setListeners()
+        setContentView(view)
+        showLoader()
+        scrollPaging()
+        observe()
+    }
+
+
+
+    private fun setListeners(){
         binding.fab.setOnClickListener { view ->
             onAddButtonClick()
         }
@@ -104,15 +101,7 @@ class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
         binding.ivExit.setOnClickListener {
             finish()
         }
-        setContentView(view)
-        showLoader()
-        scrollPaging()
-        observe()
     }
-
-
-
-
     private fun scrollPaging() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             binding.scroll.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
@@ -128,7 +117,6 @@ class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     private fun observe() {
         dogsViewModel.imagesList.observe(this, Observer { list ->
             if (list.isNullOrEmpty()) {
@@ -139,7 +127,7 @@ class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
             hideLoader()
         })
 
-        dogsViewModel.isFavorite.observe(this, Observer { result ->
+        favoriteViewModel.isFavorite.observe(this, Observer { result ->
             isFavorite = result
             println("favorite observer $isFavorite")
             if (isFavorite) {
@@ -161,10 +149,12 @@ class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
         binding.btnAddFavorite.setOnClickListener {
             if (isFavorite) {
                 binding.btnAddFavorite.setImageResource(R.drawable.ic_favorite_border)
-                dogsViewModel.deleteFavorite(item)
+                favoriteViewModel.deleteFavorite(item)
+                MessageFactory.getSnackBar(MessageType.DELETEFAVORITEMESSAGE,binding.root).show()
             } else {
                 binding.btnAddFavorite.setImageResource(R.drawable.ic_favorite)
-                dogsViewModel.addFavorite(item)
+                favoriteViewModel.addFavorite(item)
+                MessageFactory.getSnackBar(MessageType.ADDEDFAVORITEMESSAGE,binding.root).show()
             }
         }
     }
@@ -186,7 +176,7 @@ class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
         return NetWorkConnectivity.checkForInternet(this)
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
+
     private fun showLoader() {
         binding.swipeContainerDogs.isRefreshing = true
         loading = true
@@ -266,7 +256,7 @@ class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
+
     private fun download(){
         with(binding){
 
@@ -276,7 +266,7 @@ class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
                 val imagePath = MediaStore.Images.Media.insertImage(contentResolver, bitmap, dog.breed, dog.breed )
                 val URI = Uri.parse(imagePath)
                 MessageFactory.getSnackBar(MessageType.DOWNLOADMESSAGE,root).show()
-                println(URI)
+
             }
         }
     }

@@ -18,6 +18,8 @@
     <string name="tab_2"></string>
     <string name="failed_get_images">Hubo un error al obtener las imagenes, intenta de nuevo</string>
     <string name="internet_problems">No hay conexión a internet, asegurate estar conectado a una red</string>
-    <string name="download">Download successfully</string>
+    <string name="download">Descarga Completa</string>
     <string name="toolbar_text">Imagenes de perros</string>
+    <string name="addFavorite">Se ha añadido a favoritos</string>
+    <string name="deleteFavorite">Se ha eliminado de los favoritos</string>
 </resources>

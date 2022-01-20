@@ -1,8 +1,7 @@
 package com.edbinns.dogsapp.utils
 
-import android.os.Build
 import android.view.View
-import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import com.edbinns.dogsapp.R
 import com.google.android.material.snackbar.Snackbar
 
@@ -10,12 +9,14 @@ enum class MessageType {
     FAILEDGETIMAGESMESSAGES,
     DEFAULTMESSAGE,
     NETWORKCONNECTIOERRORMESSAGE,
-    DOWNLOADMESSAGE
+    DOWNLOADMESSAGE,
+    ADDEDFAVORITEMESSAGE,
+    DELETEFAVORITEMESSAGE
 }
 
 object MessageFactory {
 
-    @RequiresApi(Build.VERSION_CODES.M)
+
     fun getSnackBar(type: MessageType, view: View) =
         when (type) {
             MessageType.FAILEDGETIMAGESMESSAGES -> setSnackBar(
@@ -24,16 +25,33 @@ object MessageFactory {
                 R.color.error
             )
             MessageType.DEFAULTMESSAGE -> setSnackBar(view, R.string.not_found_image, R.color.error)
-            MessageType.NETWORKCONNECTIOERRORMESSAGE -> setSnackBar(view, R.string.internet_problems, R.color.error)
+            MessageType.NETWORKCONNECTIOERRORMESSAGE -> setSnackBar(
+                view,
+                R.string.internet_problems,
+                R.color.error
+            )
             MessageType.DOWNLOADMESSAGE -> setSnackBar(view, R.string.download, R.color.colorGreen)
+            MessageType.ADDEDFAVORITEMESSAGE -> setSnackBar(
+                view,
+                R.string.addFavorite,
+                R.color.colorGreen
+            )
+            MessageType.DELETEFAVORITEMESSAGE -> setSnackBar(
+                view,
+                R.string.deleteFavorite,
+                R.color.colorGreen
+            )
         }
 
 
-    @RequiresApi(Build.VERSION_CODES.M)
     private fun setSnackBar(view: View, messageID: Int, color: Int): Snackbar {
+
         val message = view.resources.getString(messageID)
         val sb = Snackbar.make(view, message, Snackbar.LENGTH_LONG)
-        view.resources?.getColor(color, null)?.let { sb.view.setBackgroundColor(it) }
+
+        sb.view.setBackgroundColor(ContextCompat.getColor(view.context, color))
         return sb
+
+
     }
 }

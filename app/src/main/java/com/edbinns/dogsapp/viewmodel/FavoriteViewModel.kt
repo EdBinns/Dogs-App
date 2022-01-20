@@ -14,14 +14,47 @@ import javax.inject.Inject
 class FavoriteViewModel @Inject constructor(
     private val getALLFavoriteUseCase: GetALLFavoriteUseCase,
     private val deleteFavoriteUseCase: DeleteFavoriteUseCase,
+    private val addFavoriteUseCase: AddFavoriteUseCase,
     private val getByUrlUseCase: GetByUrlUseCase,
-    private val updateFavoriteUseCase: UpdateFavoriteUseCase
 ) : ViewModel(){
 
     val favoritesList : LiveData<List<Favorite>> = getALLFavoriteUseCase.getAllFavorite
     val mutableList : MutableLiveData<List<Favorite>> = MutableLiveData<List<Favorite>>()
 
 
+    val isFavorite = MutableLiveData<Boolean>()
+
+    fun addFavorite(data: Dog) {
+        val favorite = data.toFavorites()
+        println("favorite $favorite")
+        viewModelScope.launch(Dispatchers.IO) {
+            val temp: Favorite? = getByUrlUseCase(favorite.imageURL)
+            if (temp == null) {
+                addFavoriteUseCase(favorite)
+                isFavorite.postValue(true)
+            }
+
+        }
+    }
+
+    fun deleteFavorite(data: Dog) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val temp: Favorite? = getByUrlUseCase(data.imageURL)
+            temp?.let {
+                deleteFavoriteUseCase(temp)
+                isFavorite.postValue(false)
+            }
+        }
+    }
+
+    fun validateFavorite(data: Dog) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val temp: Favorite? = getByUrlUseCase(data.imageURL)
+            temp?.let {
+                isFavorite.postValue(true)
+            }
+        }
+    }
     fun getAllFavorites(){
         mutableList.postValue(favoritesList.value)
     }

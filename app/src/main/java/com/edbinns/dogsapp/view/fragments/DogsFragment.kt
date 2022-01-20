@@ -46,7 +46,6 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,6 +53,12 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
 
         _binding = FragmentDogsBinding.inflate(inflater, container, false)
 
+        setListeners()
+
+        return binding.root
+    }
+
+    private fun setListeners() {
         with(binding.rvDogs) {
             layoutManager = manager
             adapter = dogsAdapter
@@ -75,8 +80,6 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
             fragmentManager?.let { manager -> dialog.show(manager, "SearchDialog") }
 
         }
-
-        return binding.root
     }
 
 
@@ -156,7 +159,7 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
             dogsViewModel.getDogsImages()
         }
     }
-    @RequiresApi(Build.VERSION_CODES.M)
+
     private fun showErrorMessage(){
         hideLoader()
         showLayout()

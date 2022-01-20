@@ -29,12 +29,7 @@
             app:destination="@id/navFactsFragment" />
     </fragment>
 
-    <fragment
-        android:id="@+id/navFactsFragment"
-        android:name="com.edbinns.dogsapp.view.fragments.FactsFragment"
-        android:label="fragment_facts"
-        tools:layout="@layout/fragment_facts">
-    </fragment>
+
 
 
     <dialog

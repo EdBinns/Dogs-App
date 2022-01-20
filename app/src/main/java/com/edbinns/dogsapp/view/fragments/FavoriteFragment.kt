@@ -71,7 +71,7 @@ class FavoriteFragment : Fragment(), ItemClickListener<Dog> {
         })
     }
 
-    fun observeLogic(list: List<Favorite>) {
+    private fun observeLogic(list: List<Favorite>) {
         dogsAdapter.deleteData()
 
         if (list.isNullOrEmpty()) {

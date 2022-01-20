@@ -76,7 +76,7 @@ class SearchDialog : DialogFragment() {
         adapter?.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         return adapter
     }
-    fun setUpSpinnerBreed() {
+    private fun setUpSpinnerBreed() {
 
         val breedsAdapter = getSpinnerAdapter(breedsSpinnerList)
 

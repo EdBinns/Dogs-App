@@ -28,9 +28,6 @@ import javax.inject.Singleton
 class DogsViewModel @Inject constructor(
     private val getDogsImagesUseCase: GetDogsImagesUseCase,
     private val getDogsByBreedUseCase: GetDogsByBreedUseCase,
-    private val deleteFavoriteUseCase: DeleteFavoriteUseCase,
-    private val addFavoriteUseCase: AddFavoriteUseCase,
-    private val getByUrlUseCase: GetByUrlUseCase,
     private val getResultSearchUseCase: GetResultSearchUseCase,
     private val getDogsBySubBreedUseCase: GetDogsBySubBreedUseCase,
     private val getErrorUseCase: GetErrorUseCase,
@@ -41,46 +38,11 @@ class DogsViewModel @Inject constructor(
     val imagesList = MutableLiveData<List<Dog>>()
     val errorMessage: LiveData<MessageType> = getErrorUseCase.getErrorMessage
 
-    val isFavorite = MutableLiveData<Boolean>()
-
 
     fun getDogsImages() {
         viewModelScope.launch {
             val result = getDogsImagesUseCase()
             validateResult(result)
-        }
-    }
-
-
-    fun addFavorite(data: Dog) {
-        val favorite = data.toFavorites()
-        println("favorite $favorite")
-        viewModelScope.launch(Dispatchers.IO) {
-            val temp: Favorite? = getByUrlUseCase(favorite.imageURL)
-            if (temp == null) {
-                addFavoriteUseCase(favorite)
-                isFavorite.postValue(true)
-            }
-
-        }
-    }
-
-    fun deleteFavorite(data: Dog) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val temp: Favorite? = getByUrlUseCase(data.imageURL)
-            temp?.let {
-                deleteFavoriteUseCase(temp)
-                isFavorite.postValue(false)
-            }
-        }
-    }
-
-    fun validateFavorite(data: Dog) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val temp: Favorite? = getByUrlUseCase(data.imageURL)
-            temp?.let {
-                isFavorite.postValue(true)
-            }
         }
     }
 
@@ -98,7 +60,6 @@ class DogsViewModel @Inject constructor(
 
         }
     }
-
 
     val validateResult: (List<Dog>) -> Unit = { result ->
         if (!result.isNullOrEmpty()) {
@@ -124,6 +85,5 @@ class DogsViewModel @Inject constructor(
         }
         return false
     }
-
 
 }
