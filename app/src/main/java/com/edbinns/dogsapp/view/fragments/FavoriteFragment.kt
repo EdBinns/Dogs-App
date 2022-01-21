@@ -21,6 +21,7 @@ import com.edbinns.dogsapp.view.activitys.ItemDogActivity
 import com.edbinns.dogsapp.view.adapters.DogsAdapter
 import com.edbinns.dogsapp.view.adapters.ItemClickListener
 import com.edbinns.dogsapp.viewmodel.FavoriteViewModel
+import com.google.android.gms.ads.AdRequest
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -53,6 +54,7 @@ class FavoriteFragment : Fragment(), ItemClickListener<Dog> {
             dogsAdapter.deleteData()
             favoriteViewModel.getAllFavorites()
         }
+        loadAds()
         return binding.root
     }
 
@@ -61,7 +63,10 @@ class FavoriteFragment : Fragment(), ItemClickListener<Dog> {
         showLoader()
         observe()
     }
-
+    private fun loadAds(){
+        val adRequest = AdRequest.Builder().build()
+        binding.banner.loadAd(adRequest)
+    }
     private fun observe() {
         favoriteViewModel.favoritesList.observe(viewLifecycleOwner, Observer { list ->
             observeLogic(list)

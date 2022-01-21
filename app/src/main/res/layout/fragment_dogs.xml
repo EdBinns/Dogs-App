@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     tools:context=".view.fragments.DogsFragment">
 
 
@@ -20,8 +21,7 @@
             <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 android:id="@+id/swipe_container_dogs"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
+                android:layout_height="match_parent">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvDogs"
@@ -46,6 +46,15 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_search"
         android:layout_gravity="bottom|end"
-        android:layout_margin="10dp"/>
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="55dp"/>
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-3940256099942544/6300978111"/>
+
 
 </FrameLayout>

@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
 import com.edbinns.dogsapp.utils.*
 import com.edbinns.dogsapp.viewmodel.FavoriteViewModel
+import com.google.android.gms.ads.AdRequest
 
 
 @AndroidEntryPoint
@@ -70,6 +71,7 @@ class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
         download()
         favoriteViewModel.validateFavorite(dog)
         setListeners()
+        loadAds()
         setContentView(view)
         showLoader()
         scrollPaging()
@@ -101,6 +103,11 @@ class ItemDogActivity : AppCompatActivity(), ItemClickListener<Dog> {
         binding.ivExit.setOnClickListener {
             finish()
         }
+    }
+
+    private fun loadAds(){
+        val adRequest = AdRequest.Builder().build()
+        binding.banner.loadAd(adRequest)
     }
     private fun scrollPaging() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

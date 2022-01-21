@@ -25,6 +25,7 @@ import com.edbinns.dogsapp.view.activitys.ItemDogActivity
 import com.edbinns.dogsapp.view.adapters.DogsAdapter
 import com.edbinns.dogsapp.view.adapters.ItemClickListener
 import com.edbinns.dogsapp.viewmodel.DogsViewModel
+import com.google.android.gms.ads.AdRequest
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -54,7 +55,7 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
         _binding = FragmentDogsBinding.inflate(inflater, container, false)
 
         setListeners()
-
+        loadAds()
         return binding.root
     }
 
@@ -82,6 +83,11 @@ class DogsFragment : Fragment(), ItemClickListener<Dog> {
         }
     }
 
+
+    private fun loadAds(){
+        val adRequest = AdRequest.Builder().build()
+        binding.banner.loadAd(adRequest)
+    }
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
