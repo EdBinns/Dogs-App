@@ -10,8 +10,8 @@ interface FavoriteDao {
     @Query("SELECT * FROM favorite")
     fun getAll(): LiveData<List<Favorite>>
 
-    @Query("SELECT * FROM favorite WHERE id=:id")
-    suspend fun getByID(id: Int): Favorite
+    @Query("SELECT * FROM favorite WHERE imageURL=:imageURL")
+    suspend fun getByUrl(imageURL: String): Favorite
 
     @Update
     suspend fun update(favorites: Favorite)

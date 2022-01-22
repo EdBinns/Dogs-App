@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navPetsFragment">
+
+    <fragment
+        android:id="@+id/navPetsFragment"
+        android:name="com.edbinns.dogsapp.view.fragments.DogsFragment"
+        android:label="fragment_dogs"
+        tools:layout="@layout/fragment_dogs">
+        <action
+            android:id="@+id/action_navPetsFragment_to_navFavoritesFragment"
+            app:destination="@id/navFavoritesFragment" />
+
+        <action
+            android:id="@+id/action_navPetsFragment_to_navDialogSearcg"
+            app:destination="@id/navSearchBreeds" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navFavoritesFragment"
+        android:name="com.edbinns.dogsapp.view.fragments.FavoriteFragment"
+        android:label="fragment_favorites"
+        tools:layout="@layout/fragment_favorite">
+        <action
+            android:id="@+id/action_navFavoritesFragment_to_navFactsFragment"
+            app:destination="@id/navFactsFragment" />
+    </fragment>
+
+
+
+
+    <dialog
+        android:id="@+id/navSearchBreeds"
+        android:name="com.edbinns.dogsapp.view.fragments.SearchDialog"
+        android:label="dialog_search"
+        tools:layout="@layout/dialog_search"
+        />
+
+</navigation>
