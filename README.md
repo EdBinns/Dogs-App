@@ -4,8 +4,8 @@ App for people who like dogs, and who want to see different photos of different 
 it also has an option to download the images and save them in your android device
 
 
-The app is under review by Google to upload it to the Play Store, for the moment, 
-you can download it at the following link [Click here](https://github.com/EdBinns/Dogs-App/releases/tag/v1.1 "Click here")
+
+you can download it at the following link [Click here](https://play.google.com/store/apps/details?id=com.edbinns.dogsapp "Click here")
 
 
 Splash Screen
